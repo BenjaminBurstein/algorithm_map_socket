@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { INTERVAL_EMIT_POSITION } from "@/constants/settings";
+
 export default {
   data() {
     return {
@@ -10,13 +12,24 @@ export default {
     };
   },
   mounted() {
-    this.socket.on("userConnected", (user) => {
-      console.log("userConnected");
+    this.$socket.onUserConnected(this.socket, (user) => {
+      console.log("@userConnected");
     });
 
-    this.socket.on("userMooved", (user) => {
-      console.log(user);
+    this.$socket.onUserDisconnected(this.socket, (user) => {
+      console.log("@userDisconnected");
     });
+
+    this.$socket.onUserMooved(this.socket, (user) => {
+      console.log("@userMooved");
+    });
+
+    this.$socket.onDestinationChanged(this.socket, (destination) => {
+      console.log("@destinationChanged");
+    });
+
+    // Send position every X secondes
+    setInterval(this.sendPosition, INTERVAL_EMIT_POSITION);
   },
   methods: {
     sendPosition() {
@@ -27,6 +40,9 @@ export default {
           result.coords.longitude
         );
       });
+    },
+    changeDestination() {
+      this.$socket.changeDestination(this.socket, 00, 00);
     },
   },
 };

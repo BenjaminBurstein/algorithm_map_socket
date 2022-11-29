@@ -43,10 +43,9 @@ io.on('connection', (socket) => {
     console.log(`[+] ${socket.id}`)
     socket.broadcast.emit('userConnected', { id: socket.id })
 
-    // On sendPosition
+    // onSendPosition
     socket.on('sendPosition', (position) => {
         console.log(`[sendPosition] ${socket.id}`)
-
         socket.broadcast.emit("userMooved", {
             id: socket.id,
             name: "XX",
@@ -55,6 +54,16 @@ io.on('connection', (socket) => {
         })
     });
 
+    // onChangeDestination
+    socket.on('changeDestination', (position) => {
+        console.log(`[changeDestination] ${socket.id}`)
+        socket.broadcast.emit("destinationChanged", {
+            lat: position.lat,
+            lng: position.lng
+        })
+    });
+
+    // onDisconnect
     socket.on('disconnect', () => {
         console.log(`[-] ${socket.id}`)
         socket.broadcast.emit('userDisconnected', { id: socket.id })

@@ -1,0 +1,1 @@
+export const INTERVAL_EMIT_POSITION = 5000
