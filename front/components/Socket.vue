@@ -1,16 +1,33 @@
 <template>
-  <div  class="h-screen">
-    <p>Socket</p>
-  </div>
+  <button @click="sendPosition()">TEST send position</button>
 </template>
 
 <script>
-import socket from '@/services/socket'
 export default {
-  mounted() {
-    console.log('hello world')
-    socket.auth = {token: 'test'}
-    socket.connect();
+  data() {
+    return {
+      socket: this.$socket.connect({}),
+    };
   },
-}
+  mounted() {
+    this.socket.on("userConnected", (user) => {
+      console.log("userConnected");
+    });
+
+    this.socket.on("userMooved", (user) => {
+      console.log(user);
+    });
+  },
+  methods: {
+    sendPosition() {
+      navigator.geolocation.getCurrentPosition((result) => {
+        this.$socket.sendPosition(
+          this.socket,
+          result.coords.latitude,
+          result.coords.longitude
+        );
+      });
+    },
+  },
+};
 </script>

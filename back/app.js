@@ -41,8 +41,22 @@ const io = require("socket.io")(server, {
 // Socket router
 io.on('connection', (socket) => {
     console.log(`[+] ${socket.id}`)
+    socket.broadcast.emit('userConnected', { id: socket.id })
+
+    // On sendPosition
+    socket.on('sendPosition', (position) => {
+        console.log(`[sendPosition] ${socket.id}`)
+
+        socket.broadcast.emit("userMooved", {
+            id: socket.id,
+            name: "XX",
+            lat: position.lat,
+            lng: position.lng
+        })
+    });
 
     socket.on('disconnect', () => {
         console.log(`[-] ${socket.id}`)
+        socket.broadcast.emit('userDisconnected', { id: socket.id })
     });
 });
