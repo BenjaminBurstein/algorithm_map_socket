@@ -40,7 +40,7 @@ const io = require("socket.io")(server, {
 });
 // Socket data
 USERS = []
-DESTINATION = { time: null, lat: null, lng: null }
+DESTINATION = { time: "13h30", lat: null, lng: null }
 // Socket router
 io.on('connection', (socket) => {
     // onConnection

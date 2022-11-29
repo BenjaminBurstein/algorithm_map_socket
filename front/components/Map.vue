@@ -44,8 +44,8 @@ export default {
   data() {
     return {
       socket: this.$socket.connect({}),
-      zoom: 20,
-      destination: { time: "13h00", lat: null, lng: null },
+      zoom: 13,
+      destination: {time: '13h30', lat: null, lng: null },
       selfPosition: { lat: null, lng: null },
       selfMarker: { lat: null, lng: null },
       otherUsers: [],
