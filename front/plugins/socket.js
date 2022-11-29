@@ -13,8 +13,8 @@ export default ({ }, inject) => {
         sendPosition(socket, lat, lng) {
             socket.emit("changeSelf", { lat: lat, lng: lng });
         },
-        changeDestination(socket, time, lat, lng) {
-            socket.emit("changeDestination", { time: time, lat: lat, lng: lng });
+        changeDestination(socket, destination) {
+            socket.emit("changeDestination", destination);
         },
 
         // Receive events

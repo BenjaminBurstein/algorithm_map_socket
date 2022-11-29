@@ -5,6 +5,7 @@
       :zoom="zoom"
       :center="[selfPosition.lat, selfPosition.lng]"
       class="z-0"
+      @click="changeDestination"
     >
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
 
@@ -43,8 +44,8 @@ export default {
   data() {
     return {
       socket: this.$socket.connect({}),
-      zoom: 13,
-      destination: { time: null, lat: null, lng: null },
+      zoom: 20,
+      destination: { time: "13h00", lat: null, lng: null },
       selfPosition: { lat: null, lng: null },
       selfMarker: { lat: null, lng: null },
       otherUsers: [],
@@ -53,26 +54,26 @@ export default {
   mounted() {
     // @initData
     this.$socket.onInitData(this.socket, (data) => {
-      console.log("@initData", data);
+      console.info("@initData");
       this.destination = data.destination;
       this.otherUsers = data.users;
     });
 
     // @userConnected
     this.$socket.onUserConnected(this.socket, (newUser) => {
-      console.log("@userConnected");
+      console.info("@userConnected");
       this.otherUsers.push(newUser);
     });
 
     // @userDisconnected
     this.$socket.onUserDisconnected(this.socket, (oldUser) => {
-      console.log("@userDisconnected");
+      console.info("@userDisconnected");
       this.otherUsers = this.otherUsers.filter((u) => u.id != oldUser.id);
     });
 
     // @userChange
     this.$socket.onUserChanged(this.socket, (user) => {
-      console.log("@userChange");
+      console.info("@userChanged");
       const userIndex = this.otherUsers.findIndex((u) => u.id == user.id);
       this.otherUsers[userIndex] = {
         ...this.otherUsers[userIndex],
@@ -82,6 +83,7 @@ export default {
 
     // @destinationChanged
     this.$socket.onDestinationChanged(this.socket, (destination) => {
+      console.info("@destinationChanged");
       this.destination = destination;
     });
 
@@ -101,8 +103,10 @@ export default {
         );
       });
     },
-    changeDestination(time, lat, lng) {
-      this.$socket.changeDestination(this.socket, time, lat, lng);
+    changeDestination(event) {
+      this.destination.lat = event.latlng.lat;
+      this.destination.lng = event.latlng.lng;
+      this.$socket.changeDestination(this.socket, this.destination);
     },
   },
 };

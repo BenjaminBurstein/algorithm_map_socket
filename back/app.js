@@ -41,10 +41,6 @@ const io = require("socket.io")(server, {
 // Socket data
 USERS = []
 DESTINATION = { time: null, lat: null, lng: null }
-api.get('/data', (req, res) => {
-    res.status(200).json({ users: USERS, destination: DESTINATION })
-});
-
 // Socket router
 io.on('connection', (socket) => {
     // onConnection
@@ -63,21 +59,17 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('userConnected', newUser)
 
     // onChangeSelf
-    socket.on('changeSelf', (position) => {
+    socket.on('changeSelf', (newUser) => {
         console.info(`[changeSelf] ${socket.id}`)
         userIndex = USERS.findIndex(u => u.id == socket.id)
-        USERS[userIndex] = { ...USERS[userIndex], ...position }
+        USERS[userIndex] = { ...USERS[userIndex], ...newUser }
         socket.broadcast.emit("userChanged", USERS[userIndex])
     });
 
     // onChangeDestination
-    socket.on('changeDestination', (destination) => {
+    socket.on('changeDestination', (newDestination) => {
         console.info(`[changeDestination] ${socket.id}`)
-        DESTINATION = {
-            time: destination.time,
-            lat: destination.lat,
-            lng: destination.lng
-        }
+        DESTINATION = newDestination
         socket.broadcast.emit("destinationChanged", DESTINATION)
     });
 
