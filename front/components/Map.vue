@@ -28,11 +28,11 @@
         <l-marker v-if="user.lat && user.lng" :lat-lng="[user.lat, user.lng]" />
       </div>
     </l-map>
-    <!-- <MapAlert
+    <MapAlert
       class="absolute top-0 z-40"
       :selfUser="selfUser"
       :destination="destination"
-    /> -->
+    />
   </div>
 </template>
 
