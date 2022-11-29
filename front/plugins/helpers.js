@@ -9,7 +9,6 @@ export default ({ }, inject) => {
             const long2 = Math.PI*longitude2/180;
             const longDelta = long2 - long1;
             const distanceAng = Math.acos(Math.sin(lat1)*Math.sin(lat2) + Math.cos(lat1)*Math.cos(lat2)*Math.cos(longDelta));
-            console.log(distanceAng);
             const distance = distanceAng*rayonTerre;
             return distance;
         }

@@ -30,7 +30,7 @@ export default {
   data() {
     return {
       zoom: 13,
-      destination: { time: "13:00", lat: 48.8935717, lng: 2.2243825 },
+      destination: { time: "13h45", lat: 48.8935717, lng: 2.2243825 },
       selfPosition: { lat: 48.8927042, lng: 2.2368843 },
       selfMarker: { lat: 48.8935717, lng: 2.2243825 },
       /* othersPositions: [

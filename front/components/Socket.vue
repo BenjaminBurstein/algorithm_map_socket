@@ -41,8 +41,8 @@ export default {
         );
       });
     },
-    changeDestination() {
-      this.$socket.changeDestination(this.socket, 00, 00);
+    changeDestination(time, lat, lng) {
+      this.$socket.changeDestination(this.socket, time, lat, lng);
     },
   },
 };
