@@ -40,7 +40,11 @@ const io = require("socket.io")(server, {
 });
 // Socket data
 USERS = []
-DESTINATION = { time: null, lat: null, lng: null }
+DESTINATION = { time: null, pos: null }
+api.get('/data', (req, res) => {
+    res.status(200).json({ users: USERS, destination: DESTINATION })
+});
+
 // Socket router
 io.on('connection', (socket) => {
     // onConnection
@@ -52,8 +56,7 @@ io.on('connection', (socket) => {
     newUser = {
         id: socket.id,
         name: null,
-        lat: null,
-        lng: null
+        pos: null
     }
     USERS.push(newUser)
     socket.broadcast.emit('userConnected', newUser)

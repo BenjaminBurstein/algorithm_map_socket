@@ -1,39 +1,38 @@
 <template>
   <div class="relative h-screen">
     <l-map
-      v-if="selfPosition.lat && selfPosition.lng"
+      v-if="selfUser.pos"
       :zoom="zoom"
-      :center="[selfPosition.lat, selfPosition.lng]"
+      :center="[selfUser.pos.lat, selfUser.pos.lng]"
       class="z-0"
       @click="changeDestination"
     >
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
 
       <l-marker
-        v-if="selfPosition.lat && selfPosition.lng"
-        :lat-lng="[selfPosition.lat, selfPosition.lng]"
+        v-if="selfUser.pos"
+        :lat-lng="[selfUser.pos.lat, selfUser.pos.lng]"
       />
 
       <l-marker
-        v-if="selfMarker.lat && selfMarker.lng"
-        :lat-lng="[selfMarker.lat, selfMarker.lng]"
+        v-if="selfUser.marker && selfUser.marker.pos"
+        :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
       />
 
       <l-marker
-        v-if="destination.lat && destination.lng"
-        :lat-lng="[destination.lat, destination.lng]"
+        v-if="destination.pos"
+        :lat-lng="[destination.pos.lat, destination.pos.lng]"
       />
 
       <div v-for="(user, index) in otherUsers" :key="index">
         <l-marker v-if="user.lat && user.lng" :lat-lng="[user.lat, user.lng]" />
       </div>
     </l-map>
-    <MapAlert
+    <!-- <MapAlert
       class="absolute top-0 z-40"
-      :selfPosition="selfPosition"
-      :selfMarker="selfMarker"
+      :selfUser="selfUser"
       :destination="destination"
-    />
+    /> -->
   </div>
 </template>
 
@@ -45,9 +44,8 @@ export default {
     return {
       socket: this.$socket.connect({}),
       zoom: 20,
-      destination: { time: "13h00", lat: null, lng: null },
-      selfPosition: { lat: null, lng: null },
-      selfMarker: { lat: null, lng: null },
+      destination: { time: "13h00", pos: null },
+      selfUser: { pos: null, marker: null },
       otherUsers: [],
     };
   },
@@ -94,18 +92,18 @@ export default {
   methods: {
     sendPosition() {
       navigator.geolocation.getCurrentPosition((result) => {
-        this.selfPosition.lat = result.coords.latitude;
-        this.selfPosition.lng = result.coords.longitude;
-        this.$socket.sendPosition(
-          this.socket,
-          this.selfPosition.lat,
-          this.selfPosition.lng
-        );
+        this.selfUser.pos = {
+          lat: result.coords.latitude,
+          lng: result.coords.longitude,
+        };
+        this.$socket.changeSelf(this.socket, { pos: this.selfUser.pos });
       });
     },
     changeDestination(event) {
-      this.destination.lat = event.latlng.lat;
-      this.destination.lng = event.latlng.lng;
+      this.destination.pos = {
+        lat: event.latlng.lat,
+        lng: event.latlng.lng,
+      };
       this.$socket.changeDestination(this.socket, this.destination);
     },
   },

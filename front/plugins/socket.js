@@ -10,8 +10,8 @@ export default ({ }, inject) => {
         },
 
         // Emit events
-        sendPosition(socket, lat, lng) {
-            socket.emit("changeSelf", { lat: lat, lng: lng });
+        changeSelf(socket, pos) {
+            socket.emit("changeSelf", pos);
         },
         changeDestination(socket, destination) {
             socket.emit("changeDestination", destination);
