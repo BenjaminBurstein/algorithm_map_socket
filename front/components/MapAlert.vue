@@ -70,7 +70,6 @@ export default {
         } else if (this.destination.time === null ) {
           return 'Veuillez définir une heure de rendez-vous';
         }
-
       }
     },
   },
