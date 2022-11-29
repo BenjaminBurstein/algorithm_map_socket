@@ -1,10 +1,9 @@
 <template>
-<div>
-  <Socket />
-  <Map />
-</div>
+  <div>
+    <Map />
+  </div>
 </template>
 
 <script>
-export default {}
+export default {};
 </script>

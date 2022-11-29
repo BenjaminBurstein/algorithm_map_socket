@@ -7,7 +7,7 @@ const server = require('http').Server(api)
  SETUP
 */
 server.listen(process.env.PORT, () => {
-    console.log(`Server start on port ${process.env.PORT}`);
+    console.info(`Server start on port ${process.env.PORT}`);
 });
 
 
@@ -38,34 +38,53 @@ const io = require("socket.io")(server, {
         methods: ["GET", "POST"],
     },
 });
+// Socket data
+USERS = []
+DESTINATION = { time: null, lat: null, lng: null }
+api.get('/data', (req, res) => {
+    res.status(200).json({ users: USERS, destination: DESTINATION })
+});
+
 // Socket router
 io.on('connection', (socket) => {
-    console.log(`[+] ${socket.id}`)
-    socket.broadcast.emit('userConnected', { id: socket.id })
+    // onConnection
+    console.info(`[+] ${socket.id}`)
+    socket.emit("initData", {
+        users: USERS,
+        destination: DESTINATION
+    });
+    newUser = {
+        id: socket.id,
+        name: null,
+        lat: null,
+        lng: null
+    }
+    USERS.push(newUser)
+    socket.broadcast.emit('userConnected', newUser)
 
-    // onSendPosition
-    socket.on('sendPosition', (position) => {
-        console.log(`[sendPosition] ${socket.id}`)
-        socket.broadcast.emit("userMooved", {
-            id: socket.id,
-            name: "XX",
-            lat: position.lat,
-            lng: position.lng
-        })
+    // onChangeSelf
+    socket.on('changeSelf', (position) => {
+        console.info(`[changeSelf] ${socket.id}`)
+        userIndex = USERS.findIndex(u => u.id == socket.id)
+        USERS[userIndex] = { ...USERS[userIndex], ...position }
+        socket.broadcast.emit("userChanged", USERS[userIndex])
     });
 
     // onChangeDestination
-    socket.on('changeDestination', (position) => {
-        console.log(`[changeDestination] ${socket.id}`)
-        socket.broadcast.emit("destinationChanged", {
-            lat: position.lat,
-            lng: position.lng
-        })
+    socket.on('changeDestination', (destination) => {
+        console.info(`[changeDestination] ${socket.id}`)
+        DESTINATION = {
+            time: destination.time,
+            lat: destination.lat,
+            lng: destination.lng
+        }
+        socket.broadcast.emit("destinationChanged", DESTINATION)
     });
 
     // onDisconnect
     socket.on('disconnect', () => {
-        console.log(`[-] ${socket.id}`)
+        console.info(`[-] ${socket.id}`)
+        USERS = USERS.filter(u => u.id != socket.id)
         socket.broadcast.emit('userDisconnected', { id: socket.id })
     });
 });
