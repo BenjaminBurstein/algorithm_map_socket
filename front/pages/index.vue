@@ -8,6 +8,7 @@
       :otherUsers="otherUsers"
       @changeSelfPosition="selfUser.pos = $event"
       @changeDestination="destination = $event"
+      
     />
     <Users class="w-1/4" />
   </div>

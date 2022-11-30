@@ -22,7 +22,7 @@
       />
 
       <!-- SelfLine  -->
-      <l-polyline :lat-lngs="selfLine.pos" :color="selfLine.color"></l-polyline>
+      <l-polyline :lat-lngs="getLines(selfUser)" color="red"></l-polyline>
 
       <!-- Destination -->
       <l-marker
@@ -40,6 +40,9 @@
           v-if="user.marker && user.marker.pos"
           :lat-lng="[user.marker.pos.lat, user.marker.pos.lng]"
         />
+
+        <!-- Others Line -->
+        <l-polyline :lat-lngs="getLines(user)" color="green"></l-polyline>
       </div>
     </l-map>
 
@@ -72,24 +75,6 @@ export default {
     this.sendPosition();
     setInterval(this.sendPosition, INTERVAL_EMIT_POSITION);
   },
-  computed: {
-      selfLine() {
-        let points = [];
-        // Write self lines - create an array with position of different self points
-        if (this.selfUser.pos && this.selfUser.pos.lat && this.selfUser.pos.lng) {
-          points.push([this.selfUser.pos.lat, this.selfUser.pos.lng])
-        }
-        if (this.selfUser.marker && this.selfUser.marker.pos && this.selfUser.marker.pos.lat && this.selfUser.marker.pos.lng) {
-          points.push([this.selfUser.marker.pos.lat, this.selfUser.marker.pos.lng])
-        }
-        if (this.destination && this.destination.pos && this.destination.pos.lat && this.destination.pos.lng) {
-          points.push([this.destination.pos.lat, this.destination.pos.lng])
-        }
-        if (points.length > 0) {
-          return  {pos: points,color: 'red'}
-        }
-      }
-  },
   methods: {
     sendPosition() {
       navigator.geolocation.getCurrentPosition((result) => {
@@ -112,6 +97,22 @@ export default {
       this.$emit("changeDestination", newDest);
       this.$socket.changeDestination(this.socket, newDest);
     },
+    getLines(user) {
+        let points = [];
+        // Write self lines - create an array with position of different self points
+        if (user.pos && user.pos.lat && user.pos.lng) {
+          points.push([user.pos.lat, user.pos.lng])
+        }
+        if (user.marker && user.marker.pos && user.marker.pos.lat && user.marker.pos.lng) {
+          points.push([user.marker.pos.lat, user.marker.pos.lng])
+        }
+        if (this.destination && this.destination.pos && this.destination.pos.lat && this.destination.pos.lng) {
+          points.push([this.destination.pos.lat, this.destination.pos.lng])
+        }
+        if (points.length > 0) {
+          return points
+        }
+      }
   },
 };
 </script>
