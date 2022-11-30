@@ -8,6 +8,7 @@
       :otherUsers="otherUsers"
       @changeSelfPosition="selfUser.pos = $event"
       @changeDestination="destination = $event"
+      @changeSelfMarker="selfUser.marker = $event"
     />
     <Users class="w-1/4" />
   </div>
@@ -46,11 +47,13 @@ export default {
     // @userChange
     this.$socket.onUserChanged(this.socket, (user) => {
       console.info("@userChanged");
-      const userIndex = this.otherUsers.findIndex((u) => u.id == user.id);
-      this.otherUsers[userIndex] = {
-        ...this.otherUsers[userIndex],
+      let localUsers = [...this.otherUsers];
+      const userIndex = localUsers.findIndex((u) => u.id == user.id);
+      localUsers[userIndex] = {
+        ...localUsers[userIndex],
         ...user,
       };
+      this.otherUsers = localUsers;
     });
 
     // @destinationChanged
