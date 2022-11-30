@@ -18,7 +18,7 @@
         id="picker"
         name="picker"
         v-model="destination.time"
-      />. Tu dois partir {{ selfDepartTime }}.
+      />.{{selfUser.name}} dois partir {{ selfDepartTime }}.
     </p>
     <p v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">
       {{ selfDepartTime }}

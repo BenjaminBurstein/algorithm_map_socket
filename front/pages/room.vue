@@ -21,7 +21,7 @@
 export default {
   data() {
     return {
-      selfUser: { pos: null, marker: null },
+      selfUser: {name: this.$route.query.n, pos: null, marker: null },
       destination: { time: null, pos: null },
       otherUsers: [],
       messages: [],
