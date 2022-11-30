@@ -1,79 +1,29 @@
 <template>
-  <div class="flex h-screen">
-    <Restaurants class="w-1/4" @changeSelfMarker="selfUser.marker = $event" />
-    <Map
-      class="flex-1"
-      :selfUser="selfUser"
-      :destination="destination"
-      :otherUsers="otherUsers"
-      @changeSelfPosition="selfUser.pos = $event"
-      @changeDestination="destination = $event"
-      @changeSelfMarker="selfUser.marker = $event"
-    />
-    <div class="w-1/4">
-      <Users :selfUser="selfUser" :otherUsers="otherUsers" />
-      <Chat :messages="messages" @messageSent="messages.push($event)" />
-    </div>
-  </div>
+  <form @submit.prevent="login()">
+    <label for="room">Room</label>
+    <input id="room" type="text" v-model="room" />
+
+    <label for="name">Name</label>
+    <input id="name" type="text" v-model="name" />
+
+    <button type="submit">Join</button>
+  </form>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      selfUser: { pos: null, marker: null },
-      destination: { time: null, pos: null },
-      otherUsers: [],
-      messages: [],
+      room: "",
+      name: "",
     };
   },
-  mounted() {
-    // Connect socket
-    this.$socket.connect();
-
-    // @initData
-    this.$socket.onInitData((data) => {
-      console.info("@initData");
-      this.destination = data.destination;
-      this.otherUsers = data.users;
-      this.messages = data.messages;
-    });
-
-    // @userConnected
-    this.$socket.onUserConnected((newUser) => {
-      console.info("@userConnected");
-      this.otherUsers.push(newUser);
-    });
-
-    // @userDisconnected
-    this.$socket.onUserDisconnected((oldUser) => {
-      console.info("@userDisconnected");
-      this.otherUsers = this.otherUsers.filter((u) => u.id != oldUser.id);
-    });
-
-    // @userChange
-    this.$socket.onUserChanged((user) => {
-      console.info("@userChanged");
-      let localUsers = [...this.otherUsers];
-      const userIndex = localUsers.findIndex((u) => u.id == user.id);
-      localUsers[userIndex] = {
-        ...localUsers[userIndex],
-        ...user,
-      };
-      this.otherUsers = localUsers;
-    });
-
-    // @destinationChanged
-    this.$socket.onDestinationChanged((destination) => {
-      console.info("@destinationChanged");
-      this.destination = destination;
-    });
-
-    // @messageSent
-    this.$socket.onMessageSent((message) => {
-      console.info("@messageSent");
-      this.messages.push(message);
-    });
+  methods: {
+    login() {
+      if (this.room != "" && this.name != "") {
+        this.$router.push(`/room?r=${this.room}&n=${this.name}`);
+      }
+    },
   },
 };
 </script>

@@ -3,8 +3,11 @@ const socket = io(process.env.SOCKET_ENDPOINT, { autoConnect: false });
 
 export default ({ store }, inject) => {
     inject("socket", {
-        connect(auth = {}) {
-            socket.auth = auth
+        connect(room, name) {
+            socket.auth = {
+                room: room,
+                name: name
+            }
             socket.connect()
             store.commit('socket/set', socket)
             return socket

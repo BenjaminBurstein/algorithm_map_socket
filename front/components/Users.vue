@@ -9,7 +9,7 @@
       :key="user.id"
       class="text-black rounded p-2 shadow-lg bg-gray-200 overflow-hidden"
     >
-      {{ user.id }}
+      {{ user.name }}
     </div>
   </div>
 </template>

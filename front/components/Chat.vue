@@ -27,7 +27,6 @@ export default {
   methods: {
     sendMessage() {
       if (this.content != "") {
-        this.$emit("messageSent", { user: "moi", content: this.content });
         this.$socket.sendMessage(this.content);
         this.content = "";
       }

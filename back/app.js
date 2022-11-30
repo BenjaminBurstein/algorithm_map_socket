@@ -39,60 +39,67 @@ const io = require("socket.io")(server, {
     },
 });
 // Socket data
-USERS = []
-DESTINATION = { time: null, pos: null }
-MESSAGES = []
-api.get('/data', (req, res) => {
-    res.status(200).json({ users: USERS, destination: DESTINATION })
+ROOMS = {}
+api.get('/rooms', (req, res) => {
+    res.status(200).json(ROOMS)
 });
 
 // Socket router
 io.on('connection', (socket) => {
     // onConnection
     console.info(`[+] ${socket.id}`)
-    socket.emit("initData", {
-        users: USERS,
-        destination: DESTINATION,
-        messages: MESSAGES
-    });
+    socket.room = socket.handshake.auth.room
+    socket.name = socket.handshake.auth.name
+    if (!ROOMS[socket.room]) {
+        ROOMS[socket.room] = {
+            destination: { time: null, pos: null },
+            users: [],
+            messages: []
+        }
+    }
+    socket.emit("initData", ROOMS[socket.room]);
     newUser = {
         id: socket.id,
-        name: null,
+        name: socket.name,
         pos: null
     }
-    USERS.push(newUser)
-    socket.broadcast.emit('userConnected', newUser)
+    ROOMS[socket.room].users.push(newUser)
+    io.to(socket.room).emit('userConnected', newUser)
+    socket.join(socket.room)
 
     // onChangeSelf
     socket.on('changeSelf', (newUser) => {
         console.info(`[changeSelf] ${socket.id}`)
-        userIndex = USERS.findIndex(u => u.id == socket.id)
-        USERS[userIndex] = { ...USERS[userIndex], ...newUser }
-        socket.broadcast.emit("userChanged", USERS[userIndex])
+        userIndex = ROOMS[socket.room].users.findIndex(u => u.id == socket.id)
+        ROOMS[socket.room].users[userIndex] = { ...ROOMS[socket.room].users[userIndex], ...newUser }
+        io.to(socket.room).emit("userChanged", ROOMS[socket.room].users[userIndex])
     });
 
     // onChangeDestination
     socket.on('changeDestination', (newDestination) => {
         console.info(`[changeDestination] ${socket.id}`)
-        DESTINATION = newDestination
-        socket.broadcast.emit("destinationChanged", DESTINATION)
+        ROOMS[socket.room].destination = newDestination
+        io.to(socket.room).emit("destinationChanged", newDestination)
     });
 
     // onSendMessage
     socket.on('sendMessage', (content) => {
         console.info(`[sendMessage] ${socket.id}`)
         const newMessage = {
-            user: socket.id,
+            user: socket.name,
             content: content
         }
-        MESSAGES.push(newMessage)
-        socket.broadcast.emit("messageSent", newMessage)
+        ROOMS[socket.room].messages.push(newMessage)
+        io.to(socket.room).emit("messageSent", newMessage)
     });
 
     // onDisconnect
     socket.on('disconnect', () => {
         console.info(`[-] ${socket.id}`)
-        USERS = USERS.filter(u => u.id != socket.id)
-        socket.broadcast.emit('userDisconnected', { id: socket.id })
+        ROOMS[socket.room].users = ROOMS[socket.room].users.filter(u => u.id != socket.id)
+        io.to(socket.room).emit('userDisconnected', { id: socket.id })
+        if (ROOMS[socket.room].users.length == 0) {
+            delete ROOMS[socket.room]
+        }
     });
 });
