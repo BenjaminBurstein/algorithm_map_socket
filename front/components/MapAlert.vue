@@ -1,7 +1,14 @@
 <template>
   <div class="text-center w-full">
-    <p v-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng && destination.pos && destination.pos.lat && destination.pos.lng && destination.time" >Miam à {{ destination.time }}. Tu dois partir {{ selfDepartTime }}</p>
-    <p v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">{{ selfDepartTime }}</p>
+    <p v-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng && destination.pos && destination.pos.lat && destination.pos.lng && destination.time" >
+      Miam à
+      <input type="time" id="picker" name="picker" v-model="destination.time" />.
+      Tu dois partir {{ selfDepartTime }}.
+    </p>
+    <p v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">
+      {{ selfDepartTime }}
+      <input v-if="destination.pos && destination.pos.lat && destination.pos.lng" type="time" id="picker" name="picker" v-model="destination.time" />.
+    </p>
   </div>
 </template>
 
@@ -10,6 +17,11 @@ export default {
   props: {
     selfUser: null,
     destination: null,
+  },
+  data() {
+    return {
+      socket: this.$socket.get()
+    }
   },
   computed: {
     selfDistanceKm() {
@@ -41,6 +53,7 @@ export default {
       return Number.parseFloat(distanceKm).toFixed(3);
     },
     selfDepartTime() {
+       console.log(this.destination);
       const monthName = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin","Juillet", "Août",
                           "Septembre", "Octobre", "Novembre", "Décembre"];
       try {
@@ -48,8 +61,8 @@ export default {
         const travelTimePercent =  this.selfDistanceKm/5;
         //transformation en minute
         const travelTimeMinute = Math.round(travelTimePercent*60);
-        //Récupération de l'heure dans l'objet destination - format Hhi -> parse par "h" pour avoir un tableau
-        const destinationTime = this.destination.time.split('h');
+        //Récupération de l'heure dans l'objet destination - format H:i -> parse par ":" pour avoir un tableau
+        const destinationTime = this.destination.time.split(':');
         const destinationHour = destinationTime[0];
         const destinationMinute = destinationTime[1];
         const destinationDatetime = new Date();
@@ -66,12 +79,17 @@ export default {
       } catch (e) {
         console.log(e);
         if (this.destination.pos === null || (this.destination.pos && (this.destination.pos.lat === null || this.destination.pos.lng === null))) {
-          return 'Veuillez définir un point de rendez-vous';
+          return 'Veuillez définir un point de rendez-vous!';
         } else if (this.destination.time === null ) {
-          return 'Veuillez définir une heure de rendez-vous';
+          return 'Veuillez définir une heure de rendez-vous!';
         }
       }
     },
   },
+  methods: {
+    changeDestination() {
+      this.$socket.changeDestination(this.socket, this.destination);
+    },
+  }
 };
 </script>

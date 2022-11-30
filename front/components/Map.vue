@@ -44,7 +44,7 @@ export default {
     return {
       socket: this.$socket.get(),
       zoom: 20,
-      destination: { time: "13h00", pos: null },
+      destination: { time: null, pos: null },
       selfUser: { pos: null, marker: null },
       otherUsers: [],
     };

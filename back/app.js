@@ -40,7 +40,7 @@ const io = require("socket.io")(server, {
 });
 // Socket data
 USERS = []
-DESTINATION = { time: "13h34", pos: null }
+DESTINATION = { time: null, pos: null }
 api.get('/data', (req, res) => {
     res.status(200).json({ users: USERS, destination: DESTINATION })
 });
