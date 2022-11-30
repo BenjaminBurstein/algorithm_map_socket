@@ -39,12 +39,12 @@ export default {
         const distance1 = this.$helpers.getDistance(
           this.selfUser.pos.lat,
           this.selfUser.pos.lng,
-          this.selfMarker.pos.lat,
-          this.selfMarker.pos.lng
+          this.selfUser.marker.pos.lat,
+          this.selfUser.marker.pos.lng
         );
         const distance2 = this.$helpers.getDistance(
-          this.selfMarker.pos.lat,
-          this.selfMarker.pos.lng,
+          this.selfUser.marker.pos.lat,
+          this.selfUser.marker.pos.lng,
           this.destination.pos.lat,
           this.destination.pos.lng
         );
@@ -76,7 +76,7 @@ export default {
         const returnTime = `à ${departureDateTime.getHours()}h${String(departureDateTime.getMinutes()).padStart(2, "0")}`
         return returnDate + returnTime;
       } catch (e) {
-        console.log(e);
+        console.error(e);
         if (this.destination.pos === null || (this.destination.pos && (this.destination.pos.lat === null || this.destination.pos.lng === null))) {
           return 'Veuillez définir un point de rendez-vous!';
         } else if (this.destination.time === null ) {
