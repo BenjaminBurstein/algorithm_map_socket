@@ -1,12 +1,16 @@
 import { io } from "socket.io-client";
 const socket = io(process.env.SOCKET_ENDPOINT, { autoConnect: false });
 
-export default ({ }, inject) => {
+export default ({ store }, inject) => {
     inject("socket", {
         connect(auth = {}) {
             socket.auth = auth
             socket.connect()
+            store.commit('socket/set', socket)
             return socket
+        },
+        get() {
+            return store.state.socket.socket ?? this.connect()
         },
 
         // Emit events

@@ -42,7 +42,7 @@ import { INTERVAL_EMIT_POSITION } from "@/constants/settings";
 export default {
   data() {
     return {
-      socket: this.$socket.connect({}),
+      socket: this.$socket.get(),
       zoom: 20,
       destination: { time: "13h00", pos: null },
       selfUser: { pos: null, marker: null },
