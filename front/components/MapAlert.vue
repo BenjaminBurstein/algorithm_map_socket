@@ -2,12 +2,12 @@
   <div class="text-center w-full">
     <p v-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng && destination.pos && destination.pos.lat && destination.pos.lng && destination.time" >
       Miam à
-      <input type="time" id="picker" name="picker" v-model="destination.time" />.
+      <input @change="changeDestination()" type="time" id="picker" name="picker" v-model="destination.time" />.
       Tu dois partir {{ selfDepartTime }}.
     </p>
     <p v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">
       {{ selfDepartTime }}
-      <input v-if="destination.pos && destination.pos.lat && destination.pos.lng" type="time" id="picker" name="picker" v-model="destination.time" />.
+      <input @change="changeDestination()" v-if="destination.pos && destination.pos.lat && destination.pos.lng" type="time" id="picker" name="picker" v-model="destination.time" />.
     </p>
   </div>
 </template>
@@ -39,12 +39,12 @@ export default {
         const distance1 = this.$helpers.getDistance(
           this.selfUser.pos.lat,
           this.selfUser.pos.lng,
-          this.selfMarker.pos.lat,
-          this.selfMarker.pos.lng
+          this.selfUser.marker.pos.lat,
+          this.selfUser.marker.pos.lng
         );
         const distance2 = this.$helpers.getDistance(
-          this.selfMarker.pos.lat,
-          this.selfMarker.pos.lng,
+          this.selfUser.marker.pos.lat,
+          this.selfUser.marker.pos.lng,
           this.destination.pos.lat,
           this.destination.pos.lng
         );
@@ -53,7 +53,6 @@ export default {
       return Number.parseFloat(distanceKm).toFixed(3);
     },
     selfDepartTime() {
-       console.log(this.destination);
       const monthName = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin","Juillet", "Août",
                           "Septembre", "Octobre", "Novembre", "Décembre"];
       try {
@@ -73,11 +72,11 @@ export default {
         //return Heure h minute avec le 0 qui se met s'il n'y a que un digit pour les minutes
         const today = new Date();
         const returnDate = !(departureDateTime.getMonth() === today.getMonth() && departureDateTime.getDate() === today.getDate()) ?
-              `le ${departureDateTime.getDate()} ${monthName[departureDateTime.getMonth()]}` : '';
+              `le ${departureDateTime.getDate()} ${monthName[departureDateTime.getMonth()]} ` : '';
         const returnTime = `à ${departureDateTime.getHours()}h${String(departureDateTime.getMinutes()).padStart(2, "0")}`
         return returnDate + returnTime;
       } catch (e) {
-        console.log(e);
+        console.error(e);
         if (this.destination.pos === null || (this.destination.pos && (this.destination.pos.lat === null || this.destination.pos.lng === null))) {
           return 'Veuillez définir un point de rendez-vous!';
         } else if (this.destination.time === null ) {
