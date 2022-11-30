@@ -13,36 +13,66 @@
       <l-marker
         v-if="selfUser && selfUser.pos"
         :lat-lng="[selfUser.pos.lat, selfUser.pos.lng]"
-      />
+      >
+        <l-icon
+          :icon-size="[32,32]"
+          :icon-anchor="[16,32]"
+          icon-url='/icons/ping-self.png'
+        />
+      </l-marker>
 
       <!-- SelfMarker -->
       <l-marker
         v-if="selfUser && selfUser.marker && selfUser.marker.pos"
         :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
-      />
+      >
+        <l-icon
+          :icon-size="[16,16]"
+          :icon-anchor="[8,8]"
+          icon-url='/icons/ping-marker.png'
+        />
+      </l-marker>
 
       <!-- SelfLine  -->
-      <l-polyline :lat-lngs="getLines(selfUser)" color="red"></l-polyline>
+      <l-polyline :lat-lngs="getLines(selfUser)" :color="selfColor"></l-polyline>
 
       <!-- Destination -->
       <l-marker
         v-if="destination && destination.pos"
         :lat-lng="[destination.pos.lat, destination.pos.lng]"
-      />
+      >
+        <l-icon
+          :icon-size="[32,32]"
+          :icon-anchor="[16,32]"
+          icon-url='/icons/ping-destination.png'
+        />
+      </l-marker>
 
       <!-- Others -->
       <div v-for="(user, index) in otherUsers" :key="index">
         <!-- Others Pos -->
-        <l-marker v-if="user.pos" :lat-lng="[user.pos.lat, user.pos.lng]" />
+        <l-marker v-if="user.pos" :lat-lng="[user.pos.lat, user.pos.lng]">
+          <l-icon
+            :icon-size="[32,32]"
+            :icon-anchor="[16,32]"
+            :icon-url="`/icons/ping-${iconColors[index%iconColors.length]}.png`"
+          />
+        </l-marker>
 
         <!-- Others Marker -->
         <l-marker
           v-if="user.marker && user.marker.pos"
           :lat-lng="[user.marker.pos.lat, user.marker.pos.lng]"
-        />
+        >
+          <l-icon
+            :icon-size="[16,16]"
+            :icon-anchor="[8,8]"
+            icon-url='/icons/ping-marker.png'
+          />
+        </l-marker>
 
         <!-- Others Line -->
-        <l-polyline :lat-lngs="getLines(user)" color="green"></l-polyline>
+        <l-polyline :lat-lngs="getLines(user)" :color="iconColors[index%iconColors.length]"></l-polyline>
       </div>
     </l-map>
 
@@ -68,6 +98,16 @@ export default {
     return {
       socket: this.$socket.get(),
       zoom: 20,
+      iconColors: [
+        'darkBlue',
+        'green',
+        'orange',
+        'purple',
+        'pink',
+        'yellow',
+        'blue'
+      ],
+      selfColor : 'red'
     };
   },
   mounted() {
