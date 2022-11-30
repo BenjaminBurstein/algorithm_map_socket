@@ -76,7 +76,6 @@ export default {
         const returnTime = `à ${departureDateTime.getHours()}h${String(departureDateTime.getMinutes()).padStart(2, "0")}`
         return returnDate + returnTime;
       } catch (e) {
-        console.error(e);
         if (this.destination.pos === null || (this.destination.pos && (this.destination.pos.lat === null || this.destination.pos.lng === null))) {
           return 'Veuillez définir un point de rendez-vous!';
         } else if (this.destination.time === null ) {
