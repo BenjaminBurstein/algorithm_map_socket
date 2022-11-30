@@ -10,7 +10,10 @@
       @changeDestination="destination = $event"
       @changeSelfMarker="selfUser.marker = $event"
     />
-    <Users class="w-1/4" />
+    <div class="w-1/4">
+      <Users />
+      <Chat />
+    </div>
   </div>
 </template>
 
