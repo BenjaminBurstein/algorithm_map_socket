@@ -21,15 +21,21 @@
         :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
       />
 
+      <!-- SelfLine  -->
+      <l-polyline :lat-lngs="selfLine.pos" :color="selfLine.color"></l-polyline>
+
       <!-- Destination -->
       <l-marker
         v-if="destination && destination.pos"
         :lat-lng="[destination.pos.lat, destination.pos.lng]"
       />
 
-      <!-- OthersPos and OthersMarkers -->
+      <!-- Others -->
       <div v-for="(user, index) in otherUsers" :key="index">
+        <!-- Others Pos -->
         <l-marker v-if="user.pos" :lat-lng="[user.pos.lat, user.pos.lng]" />
+
+        <!-- Others Marker -->
         <l-marker
           v-if="user.marker && user.marker.pos"
           :lat-lng="[user.marker.pos.lat, user.marker.pos.lng]"
@@ -38,6 +44,7 @@
     </l-map>
 
     <MapAlert
+      v-if="selfUser && destination"
       class="absolute top-0 z-40"
       :selfUser="selfUser"
       :destination="destination"
@@ -64,6 +71,24 @@ export default {
     // Send position every X secondes
     this.sendPosition();
     setInterval(this.sendPosition, INTERVAL_EMIT_POSITION);
+  },
+  computed: {
+      selfLine() {
+        let points = [];
+        // Write self lines - create an array with position of different self points
+        if (this.selfUser.pos && this.selfUser.pos.lat && this.selfUser.pos.lng) {
+          points.push([this.selfUser.pos.lat, this.selfUser.pos.lng])
+        }
+        if (this.selfUser.marker && this.selfUser.marker.pos && this.selfUser.marker.pos.lat && this.selfUser.marker.pos.lng) {
+          points.push([this.selfUser.marker.pos.lat, this.selfUser.marker.pos.lng])
+        }
+        if (this.destination && this.destination.pos && this.destination.pos.lat && this.destination.pos.lng) {
+          points.push([this.destination.pos.lat, this.destination.pos.lng])
+        }
+        if (points.length > 0) {
+          return  {pos: points,color: 'red'}
+        }
+      }
   },
   methods: {
     sendPosition() {
