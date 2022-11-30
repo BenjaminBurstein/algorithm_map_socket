@@ -17,14 +17,13 @@
 export default {
   data() {
     return {
-      socket: this.$socket.get(),
       restaurants: this.$restaurants.get(),
     };
   },
   methods: {
     changeSelfMarker(restaurant) {
       this.$emit("changeSelfMarker", restaurant);
-      this.$socket.changeSelf(this.socket, { marker: restaurant });
+      this.$socket.changeSelf({ marker: restaurant });
     },
   },
 };

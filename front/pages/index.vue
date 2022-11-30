@@ -11,8 +11,8 @@
       @changeSelfMarker="selfUser.marker = $event"
     />
     <div class="w-1/4">
-      <Users />
-      <Chat />
+      <Users :selfUser="selfUser" :otherUsers="otherUsers" />
+      <Chat :messages="messages" @messageSent="messages.push($event)" />
     </div>
   </div>
 </template>
@@ -21,34 +21,38 @@
 export default {
   data() {
     return {
-      socket: this.$socket.get(),
       selfUser: { pos: null, marker: null },
       destination: { time: null, pos: null },
       otherUsers: [],
+      messages: [],
     };
   },
   mounted() {
+    // Connect socket
+    this.$socket.connect();
+
     // @initData
-    this.$socket.onInitData(this.socket, (data) => {
+    this.$socket.onInitData((data) => {
       console.info("@initData");
       this.destination = data.destination;
       this.otherUsers = data.users;
+      this.messages = data.messages;
     });
 
     // @userConnected
-    this.$socket.onUserConnected(this.socket, (newUser) => {
+    this.$socket.onUserConnected((newUser) => {
       console.info("@userConnected");
       this.otherUsers.push(newUser);
     });
 
     // @userDisconnected
-    this.$socket.onUserDisconnected(this.socket, (oldUser) => {
+    this.$socket.onUserDisconnected((oldUser) => {
       console.info("@userDisconnected");
       this.otherUsers = this.otherUsers.filter((u) => u.id != oldUser.id);
     });
 
     // @userChange
-    this.$socket.onUserChanged(this.socket, (user) => {
+    this.$socket.onUserChanged((user) => {
       console.info("@userChanged");
       let localUsers = [...this.otherUsers];
       const userIndex = localUsers.findIndex((u) => u.id == user.id);
@@ -60,9 +64,15 @@ export default {
     });
 
     // @destinationChanged
-    this.$socket.onDestinationChanged(this.socket, (destination) => {
+    this.$socket.onDestinationChanged((destination) => {
       console.info("@destinationChanged");
       this.destination = destination;
+    });
+
+    // @messageSent
+    this.$socket.onMessageSent((message) => {
+      console.info("@messageSent");
+      this.messages.push(message);
     });
   },
 };

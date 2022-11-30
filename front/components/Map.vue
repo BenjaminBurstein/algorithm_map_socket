@@ -15,9 +15,9 @@
         :lat-lng="[selfUser.pos.lat, selfUser.pos.lng]"
       >
         <l-icon
-          :icon-size="[32,32]"
-          :icon-anchor="[16,32]"
-          icon-url='/icons/ping-self.png'
+          :icon-size="[32, 32]"
+          :icon-anchor="[16, 32]"
+          icon-url="/icons/ping-self.png"
         />
       </l-marker>
 
@@ -27,14 +27,17 @@
         :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
       >
         <l-icon
-          :icon-size="[16,16]"
-          :icon-anchor="[8,8]"
-          icon-url='/icons/ping-marker.png'
+          :icon-size="[16, 16]"
+          :icon-anchor="[8, 8]"
+          icon-url="/icons/ping-marker.png"
         />
       </l-marker>
 
       <!-- SelfLine  -->
-      <l-polyline :lat-lngs="getLines(selfUser)" :color="selfColor"></l-polyline>
+      <l-polyline
+        :lat-lngs="getLines(selfUser)"
+        :color="selfColor"
+      ></l-polyline>
 
       <!-- Destination -->
       <l-marker
@@ -42,9 +45,9 @@
         :lat-lng="[destination.pos.lat, destination.pos.lng]"
       >
         <l-icon
-          :icon-size="[32,32]"
-          :icon-anchor="[16,32]"
-          icon-url='/icons/ping-destination.png'
+          :icon-size="[32, 32]"
+          :icon-anchor="[16, 32]"
+          icon-url="/icons/ping-destination.png"
         />
       </l-marker>
 
@@ -53,9 +56,11 @@
         <!-- Others Pos -->
         <l-marker v-if="user.pos" :lat-lng="[user.pos.lat, user.pos.lng]">
           <l-icon
-            :icon-size="[32,32]"
-            :icon-anchor="[16,32]"
-            :icon-url="`/icons/ping-${iconColors[index%iconColors.length]}.png`"
+            :icon-size="[32, 32]"
+            :icon-anchor="[16, 32]"
+            :icon-url="`/icons/ping-${
+              iconColors[index % iconColors.length]
+            }.png`"
           />
         </l-marker>
 
@@ -65,14 +70,17 @@
           :lat-lng="[user.marker.pos.lat, user.marker.pos.lng]"
         >
           <l-icon
-            :icon-size="[16,16]"
-            :icon-anchor="[8,8]"
-            icon-url='/icons/ping-marker.png'
+            :icon-size="[16, 16]"
+            :icon-anchor="[8, 8]"
+            icon-url="/icons/ping-marker.png"
           />
         </l-marker>
 
         <!-- Others Line -->
-        <l-polyline :lat-lngs="getLines(user)" :color="iconColors[index%iconColors.length]"></l-polyline>
+        <l-polyline
+          :lat-lngs="getLines(user)"
+          :color="iconColors[index % iconColors.length]"
+        ></l-polyline>
       </div>
     </l-map>
 
@@ -96,18 +104,17 @@ export default {
   },
   data() {
     return {
-      socket: this.$socket.get(),
       zoom: 20,
       iconColors: [
-        'darkBlue',
-        'green',
-        'orange',
-        'purple',
-        'pink',
-        'yellow',
-        'blue'
+        "darkBlue",
+        "green",
+        "orange",
+        "purple",
+        "pink",
+        "yellow",
+        "blue",
       ],
-      selfColor : 'red'
+      selfColor: "red",
     };
   },
   mounted() {
@@ -123,7 +130,7 @@ export default {
           lng: result.coords.longitude,
         };
         this.$emit("changeSelfPosition", newPos);
-        this.$socket.changeSelf(this.socket, { pos: newPos });
+        this.$socket.changeSelf({ pos: newPos });
       });
     },
     changeDestination(event) {
@@ -135,24 +142,34 @@ export default {
         },
       };
       this.$emit("changeDestination", newDest);
-      this.$socket.changeDestination(this.socket, newDest);
+      this.$socket.changeDestination(newDest);
     },
     getLines(user) {
-        let points = [];
-        // Write self lines - create an array with position of different self points
-        if (user.pos && user.pos.lat && user.pos.lng) {
-          points.push([user.pos.lat, user.pos.lng])
-        }
-        if (user.marker && user.marker.pos && user.marker.pos.lat && user.marker.pos.lng) {
-          points.push([user.marker.pos.lat, user.marker.pos.lng])
-        }
-        if (this.destination && this.destination.pos && this.destination.pos.lat && this.destination.pos.lng) {
-          points.push([this.destination.pos.lat, this.destination.pos.lng])
-        }
-        if (points.length > 0) {
-          return points
-        }
+      let points = [];
+      // Write self lines - create an array with position of different self points
+      if (user.pos && user.pos.lat && user.pos.lng) {
+        points.push([user.pos.lat, user.pos.lng]);
       }
+      if (
+        user.marker &&
+        user.marker.pos &&
+        user.marker.pos.lat &&
+        user.marker.pos.lng
+      ) {
+        points.push([user.marker.pos.lat, user.marker.pos.lng]);
+      }
+      if (
+        this.destination &&
+        this.destination.pos &&
+        this.destination.pos.lat &&
+        this.destination.pos.lng
+      ) {
+        points.push([this.destination.pos.lat, this.destination.pos.lng]);
+      }
+      if (points.length > 0) {
+        return points;
+      }
+    },
   },
 };
 </script>

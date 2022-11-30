@@ -14,28 +14,34 @@ export default ({ store }, inject) => {
         },
 
         // Emit events
-        changeSelf(socket, user) {
-            socket.emit("changeSelf", user);
+        changeSelf(user) {
+            this.get().emit("changeSelf", user);
         },
-        changeDestination(socket, destination) {
-            socket.emit("changeDestination", destination);
+        changeDestination(destination) {
+            this.get().emit("changeDestination", destination);
+        },
+        sendMessage(content) {
+            this.get().emit("sendMessage", content);
         },
 
         // Receive events
-        onInitData(socket, callback) {
-            socket.on("initData", (data) => { callback(data) });
+        onInitData(callback) {
+            this.get().on("initData", (data) => { callback(data) });
         },
-        onUserConnected(socket, callback) {
-            socket.on("userConnected", (user) => { callback(user) });
+        onUserConnected(callback) {
+            this.get().on("userConnected", (user) => { callback(user) });
         },
-        onUserDisconnected(socket, callback) {
-            socket.on("userDisconnected", (user) => { callback(user) });
+        onUserDisconnected(callback) {
+            this.get().on("userDisconnected", (user) => { callback(user) });
         },
-        onUserChanged(socket, callback) {
-            socket.on("userChanged", (user) => { callback(user) });
+        onUserChanged(callback) {
+            this.get().on("userChanged", (user) => { callback(user) });
         },
-        onDestinationChanged(socket, callback) {
-            socket.on("destinationChanged", (destination) => { callback(destination) });
+        onDestinationChanged(callback) {
+            this.get().on("destinationChanged", (destination) => { callback(destination) });
+        },
+        onMessageSent(callback) {
+            this.get().on("messageSent", (message) => { callback(message) });
         }
     });
 };

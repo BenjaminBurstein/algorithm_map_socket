@@ -41,6 +41,7 @@ const io = require("socket.io")(server, {
 // Socket data
 USERS = []
 DESTINATION = { time: null, pos: null }
+MESSAGES = []
 api.get('/data', (req, res) => {
     res.status(200).json({ users: USERS, destination: DESTINATION })
 });
@@ -51,7 +52,8 @@ io.on('connection', (socket) => {
     console.info(`[+] ${socket.id}`)
     socket.emit("initData", {
         users: USERS,
-        destination: DESTINATION
+        destination: DESTINATION,
+        messages: MESSAGES
     });
     newUser = {
         id: socket.id,
@@ -74,6 +76,17 @@ io.on('connection', (socket) => {
         console.info(`[changeDestination] ${socket.id}`)
         DESTINATION = newDestination
         socket.broadcast.emit("destinationChanged", DESTINATION)
+    });
+
+    // onSendMessage
+    socket.on('sendMessage', (content) => {
+        console.info(`[sendMessage] ${socket.id}`)
+        const newMessage = {
+            user: socket.id,
+            content: content
+        }
+        MESSAGES.push(newMessage)
+        socket.broadcast.emit("messageSent", newMessage)
     });
 
     // onDisconnect
