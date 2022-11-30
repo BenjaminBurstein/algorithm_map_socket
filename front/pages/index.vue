@@ -1,11 +1,63 @@
 <template>
   <div class="flex h-screen">
-    <Restaurants class="w-1/4" />
-    <Map class="flex-1" />
+    <Restaurants class="w-1/4" @changeSelfMarker="selfUser.marker = $event" />
+    <Map
+      class="flex-1"
+      :selfUser="selfUser"
+      :destination="destination"
+      :otherUsers="otherUsers"
+      @changeSelfPosition="selfUser.pos = $event"
+      @changeDestination="destination = $event"
+    />
     <Users class="w-1/4" />
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      socket: this.$socket.get(),
+      selfUser: { pos: null, marker: null },
+      destination: { time: null, pos: null },
+      otherUsers: [],
+    };
+  },
+  mounted() {
+    // @initData
+    this.$socket.onInitData(this.socket, (data) => {
+      console.info("@initData");
+      this.destination = data.destination;
+      this.otherUsers = data.users;
+    });
+
+    // @userConnected
+    this.$socket.onUserConnected(this.socket, (newUser) => {
+      console.info("@userConnected");
+      this.otherUsers.push(newUser);
+    });
+
+    // @userDisconnected
+    this.$socket.onUserDisconnected(this.socket, (oldUser) => {
+      console.info("@userDisconnected");
+      this.otherUsers = this.otherUsers.filter((u) => u.id != oldUser.id);
+    });
+
+    // @userChange
+    this.$socket.onUserChanged(this.socket, (user) => {
+      console.info("@userChanged");
+      const userIndex = this.otherUsers.findIndex((u) => u.id == user.id);
+      this.otherUsers[userIndex] = {
+        ...this.otherUsers[userIndex],
+        ...user,
+      };
+    });
+
+    // @destinationChanged
+    this.$socket.onDestinationChanged(this.socket, (destination) => {
+      console.info("@destinationChanged");
+      this.destination = destination;
+    });
+  },
+};
 </script>

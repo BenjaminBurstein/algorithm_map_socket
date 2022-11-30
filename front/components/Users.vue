@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2 class="text-xl font-bold">Restaurants</h2>
+  <div class="flex flex-col gap-5 p-5">
+    <h2 class="text-xl font-bold">Users</h2>
   </div>
 </template>
 

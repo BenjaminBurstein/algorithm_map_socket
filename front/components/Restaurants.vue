@@ -5,6 +5,8 @@
       v-for="(restaurant, index) in restaurants"
       :key="index"
       class="text-black rounded p-3 shadow-lg cursor-pointer"
+      :class="'bg-gray-200 hover:bg-gray-100'"
+      @click="changeSelfMarker(restaurant)"
     >
       {{ restaurant.name }}
     </div>
@@ -20,13 +22,10 @@ export default {
     };
   },
   methods: {
-    /* changeDestination(event) {
-      this.destination.pos = {
-        lat: event.latlng.lat,
-        lng: event.latlng.lng,
-      };
-      this.$socket.changeDestination(this.socket, this.destination);
-    }, */
+    changeSelfMarker(restaurant) {
+      this.$emit("changeSelfMarker", restaurant);
+      this.$socket.changeSelf(this.socket, { marker: restaurant });
+    },
   },
 };
 </script>

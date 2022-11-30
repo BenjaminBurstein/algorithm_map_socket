@@ -14,8 +14,8 @@ export default ({ store }, inject) => {
         },
 
         // Emit events
-        changeSelf(socket, pos) {
-            socket.emit("changeSelf", pos);
+        changeSelf(socket, user) {
+            socket.emit("changeSelf", user);
         },
         changeDestination(socket, destination) {
             socket.emit("changeDestination", destination);
