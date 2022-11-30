@@ -1,6 +1,6 @@
 <template>
-  <div class="text-center w-full">
-    <p
+  <div class="text-center w-full flex mt-5">
+    <p class="bg-white w-fit m-auto"
       v-if="
         selfUser.pos &&
         selfUser.pos.lat &&
@@ -18,9 +18,9 @@
         id="picker"
         name="picker"
         v-model="destination.time"
-      />.{{selfUser.name}} dois partir {{ selfDepartTime }}.
+      />.{{selfUser.name}} dois partir {{ selfDepartTime }}
     </p>
-    <p v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">
+    <p class="bg-white w-fit m-auto" v-else-if="selfUser.pos && selfUser.pos.lat && selfUser.pos.lng">
       {{ selfDepartTime }}
       <input
         @change="changeDestination()"
@@ -29,7 +29,7 @@
         id="picker"
         name="picker"
         v-model="destination.time"
-      />.
+      />
     </p>
   </div>
 </template>
@@ -117,7 +117,7 @@ export default {
           : "";
         const returnTime = `à ${departureDateTime.getHours()}h${String(
           departureDateTime.getMinutes()
-        ).padStart(2, "0")}`;
+        ).padStart(2, "0")}.`;
         return returnDate + returnTime;
       } catch (e) {
         if (
