@@ -10,7 +10,8 @@
       @changeDestination="destination = $event"
       @changeSelfMarker="selfUser.marker = $event"
     />
-    <div class="w-1/4">
+    <div class="w-1/4 flex flex-col">
+      <input @click="leaveRoom()" type="button" class=" bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline" value="Quitter ➡️"/>
       <Users :selfUser="selfUser" :otherUsers="otherUsers" />
       <Chat :messages="messages" />
     </div>
@@ -75,5 +76,10 @@ export default {
       this.messages.push(message);
     });
   },
+  methods: {
+    leaveRoom() {
+      window.location.href = '/'
+    }
+  }
 };
 </script>
