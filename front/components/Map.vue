@@ -8,49 +8,6 @@
       @click="changeDestination"
     >
       <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-
-      <!-- SelfPos -->
-      <l-marker
-        v-if="selfUser && selfUser.pos"
-        :lat-lng="[selfUser.pos.lat, selfUser.pos.lng]"
-      >
-        <l-icon
-          :icon-size="[32, 32]"
-          :icon-anchor="[16, 32]"
-          icon-url="/icons/ping-self.png"
-        />
-      </l-marker>
-
-      <!-- SelfMarker -->
-      <l-marker
-        v-if="selfUser && selfUser.marker && selfUser.marker.pos"
-        :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
-      >
-        <l-icon
-          :icon-size="[16, 16]"
-          :icon-anchor="[8, 8]"
-          icon-url="/icons/ping-marker.png"
-        />
-      </l-marker>
-
-      <!-- SelfLine  -->
-      <l-polyline
-        :lat-lngs="getLines(selfUser)"
-        :color="selfColor"
-      ></l-polyline>
-
-      <!-- Destination -->
-      <l-marker
-        v-if="destination && destination.pos"
-        :lat-lng="[destination.pos.lat, destination.pos.lng]"
-      >
-        <l-icon
-          :icon-size="[32, 32]"
-          :icon-anchor="[16, 32]"
-          icon-url="/icons/ping-destination.png"
-        />
-      </l-marker>
-
       <!-- Others -->
       <div v-for="(user, index) in otherUsers" :key="index">
         <!-- Others Pos -->
@@ -81,6 +38,48 @@
           :lat-lngs="getLines(user)"
           :color="iconColors[index % iconColors.length]"
         ></l-polyline>
+
+        <!-- SelfPos -->
+        <l-marker
+          v-if="selfUser && selfUser.pos"
+          :lat-lng="[selfUser.pos.lat, selfUser.pos.lng]"
+        >
+          <l-icon
+            :icon-size="[32, 32]"
+            :icon-anchor="[16, 32]"
+            icon-url="/icons/ping-self.png"
+          />
+        </l-marker>
+
+        <!-- SelfMarker -->
+        <l-marker
+          v-if="selfUser && selfUser.marker && selfUser.marker.pos"
+          :lat-lng="[selfUser.marker.pos.lat, selfUser.marker.pos.lng]"
+        >
+          <l-icon
+            :icon-size="[16, 16]"
+            :icon-anchor="[8, 8]"
+            icon-url="/icons/ping-marker.png"
+          />
+        </l-marker>
+
+        <!-- SelfLine  -->
+        <l-polyline
+          :lat-lngs="getLines(selfUser)"
+          :color="selfColor"
+        ></l-polyline>
+
+        <!-- Destination -->
+        <l-marker
+          v-if="destination && destination.pos"
+          :lat-lng="[destination.pos.lat, destination.pos.lng]"
+        >
+          <l-icon
+            :icon-size="[32, 32]"
+            :icon-anchor="[16, 32]"
+            icon-url="/icons/ping-destination.png"
+          />
+        </l-marker>
       </div>
     </l-map>
 
@@ -94,7 +93,11 @@
 </template>
 
 <script>
-import { INTERVAL_EMIT_POSITION } from "@/constants/settings";
+import {
+  INTERVAL_EMIT_POSITION,
+  SELF_USER_COLOR,
+  OTHER_USERS_COLORS,
+} from "@/constants/settings";
 
 export default {
   props: {
@@ -104,17 +107,9 @@ export default {
   },
   data() {
     return {
-      zoom: 20,
-      iconColors: [
-        "darkBlue",
-        "green",
-        "orange",
-        "purple",
-        "pink",
-        "yellow",
-        "blue",
-      ],
-      selfColor: "red",
+      zoom: 15,
+      iconColors: OTHER_USERS_COLORS,
+      selfColor: SELF_USER_COLOR,
     };
   },
   mounted() {
